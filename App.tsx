@@ -3,7 +3,7 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 // FIX: Removed non-exported `LiveSession` and added `LiveServerMessage` and `Modality` for proper typing.
 import { GoogleGenAI, Blob, LiveServerMessage, Modality } from '@google/genai';
-import { PlayIcon, StopIcon, EyeIcon, EyeOffIcon, MaximizeIcon, MinimizeIcon, ArrowDownIcon } from './components/icons';
+import { PlayIcon, StopIcon, EyeIcon, EyeOffIcon, MaximizeIcon, MinimizeIcon, ArrowDownIcon } from './components/icons.tsx';
 
 // Helper functions for audio encoding as per Gemini API documentation
 function encode(bytes: Uint8Array): string {
