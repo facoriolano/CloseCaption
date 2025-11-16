@@ -1,31 +1,94 @@
 <!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Live Closed Captions</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-      body {
-        overscroll-behavior: none;
-      }
-    </style>
-  <script type="importmap">
-{
-  "imports": {
-    "react": "https://aistudiocdn.com/react@^19.2.0",
-    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
-    "react/": "https://aistudiocdn.com/react@^19.2.0/",
-    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.29.1"
-  }
-}
-</script>
-<!-- Add Babel Standalone for client-side TSX transpilation -->
-<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Transcrição em tempo real</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: black;
+      color: white;
+      font-family: sans-serif;
+      height: 100%;
+      overflow: hidden;
+    }
+    #transcription {
+      padding: 20px;
+      font-size: 2em;
+      white-space: pre-wrap;
+    }
+    #controls {
+      position: fixed;
+      bottom: 20px;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+    }
+    button {
+      font-size: 1.2em;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    #startBtn { background: green; color: white; }
+    #stopBtn { background: red; color: white; }
+  </style>
 </head>
-  <body class="bg-black">
-    <div id="root"></div>
-    <!-- Update script tag to be processed by Babel, using relative path for GitHub Pages -->
-    <script type="text/babel" data-type="module" data-presets="react,typescript" src="index.tsx"></script>
-  </body>
+<body>
+  <div id="transcription">Clique em "Play" para começar...</div>
+  <div id="controls">
+    <button id="startBtn">▶️ Play</button>
+    <button id="stopBtn">⏹️ Stop</button>
+  </div>
+
+  <script>
+    const transcription = document.getElementById('transcription');
+    const startBtn = document.getElementById('startBtn');
+    const stopBtn = document.getElementById('stopBtn');
+
+    let recognition;
+    let isListening = false;
+
+    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      recognition = new SpeechRecognition();
+      recognition.lang = 'pt-BR';
+      recognition.continuous = true;
+      recognition.interimResults = true;
+
+      recognition.onresult = (event) => {
+        let text = '';
+        for (let i = event.resultIndex; i < event.results.length; ++i) {
+          text += event.results[i][0].transcript;
+        }
+        transcription.textContent = text;
+      };
+
+      recognition.onerror = (event) => {
+        transcription.textContent = 'Erro: ' + event.error;
+      };
+    } else {
+      transcription.textContent = 'Reconhecimento de voz não suportado neste navegador.';
+    }
+
+    startBtn.onclick = () => {
+      if (recognition && !isListening) {
+        recognition.start();
+        isListening = true;
+        transcription.textContent = '🎙️ Capturando áudio...';
+      }
+    };
+
+    stopBtn.onclick = () => {
+      if (recognition && isListening) {
+        recognition.stop();
+        isListening = false;
+        transcription.textContent += '\n⏹️ Parado.';
+      }
+    };
+  </script>
+</body>
 </html>
