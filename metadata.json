@@ -1,7 +1,0 @@
-{
-  "name": "Live Closed Captions",
-  "description": "A real-time closed captioning web application that transcribes microphone input using Gemini API. Designed for full-screen display on large screens, with features like auto-scrolling, manual scroll-back, and hideable controls.",
-  "requestFramePermissions": [
-    "microphone"
-  ]
-}
